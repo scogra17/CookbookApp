@@ -32,3 +32,9 @@ $kill -9 <PID>
 
 ### Css changes won't load in broswer
 The browser is likely caching the old main.css. Click 'reload' while holding down the 'shift' key to do a full reload of the browser. 
+
+## Pushing to master 
+- https://code.tutsplus.com/tutorials/quick-tip-how-to-work-with-github-and-multiple-accounts--net-22574
+- https://www.datree.io/resources/git-error-fatal-remote-origin-already-exists
+git remote set-url origin https://github.com/scogra17/CookbookApp
+git push -u origin master
