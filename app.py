@@ -13,9 +13,38 @@ class Recipe(db.Model):
 	name = db.Column(db.String(128), nullable=False)
 	created_at = db.Column(db.DateTime, nullable=False, 
 		default=datetime.utcnow)
+	recipeingredient = db.relationship('RecipeIngredient', backref='recipe',\
+		lazy=True) 
 
 	def __repr__(self):
 		return '<Recipe %r>' % self.name 
+
+class Ingredient(db.Model):
+	id = db.Column(db.Integer, primary_key=True)
+	name = db.Column(db.String(128), nullable=False, 
+		unique=True)
+	created_at = db.Column(db.DateTime, nullable=False,
+		default=datetime.utcnow)
+	measurement_unit=db.Column(db.String(64), nullable=False)
+	unit_cost=db.Column(db.Float(), nullable=False)
+	recipeingredient = db.relationship('RecipeIngredient', backref='ingredient',\
+		lazy=True)
+
+	def __repr__(self):
+		return "<Ingredient name: %r, measurement_unit: %r , \
+		unit_cost: %f>"% (self.name, self.measurement_unit, self.unit_cost)
+
+class RecipeIngredient(db.Model):
+	id = db.Column(db.Integer, primary_key=True)
+	recipe_id = db.Column(db.Integer, db.ForeignKey('recipe.id'), nullable=False)
+	ingredient_id = db.Column(db.Integer, db.ForeignKey('ingredient.id'), nullable=False)
+	unit_amount = db.Column(db.Float(), nullable=False)
+
+	def __repr__(self):
+		return "<id: %d, recipe_id: %d , ingredient_id: %d>"\
+		% (self.id, self.recipe_id, self.ingredient_id)
+
+
 
 @app.route('/', methods=['GET', 'POST'])
 def index():

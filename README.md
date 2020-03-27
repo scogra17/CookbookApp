@@ -38,3 +38,24 @@ The browser is likely caching the old main.css. Click 'reload' while holding dow
 - https://www.datree.io/resources/git-error-fatal-remote-origin-already-exists
 git remote set-url origin https://github.com/scogra17/CookbookApp
 git push -u origin master
+
+## DB changes
+From pipenv:
+$ python
+>>> from app import db
+>>> db.create_all()
+
+Add to table represented by model [ClassName]:
+>>> from app import [ClassName]
+>>> obj = [ClassName]([fields])
+>>> db.session.add(obj)
+>>> db.session.commit()
+
+Retrieving data:
+>>> [ClassName].query.all()
+
+
+See tables:
+$ db.metadata.tables
+
+
