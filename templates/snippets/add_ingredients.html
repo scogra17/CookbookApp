@@ -1,0 +1,18 @@
+<div class="container">
+	<form action="/update/{{ recipe.id }}/add_ingredient" method="POST">
+		<divf class="form-row">
+			<div class="col-sm-5 my-1">
+				<input type="text" class="form-control" name="ingredient_name" placeholder="Ingredient">
+			</div>
+			<div class="col-sm-2 my-1">
+				<input type="text" class="form-control" name="unit_amount" placeholder="Amount">
+			</div>
+			<div class="col-sm-2 my-1">
+				<input type="text" class="form-control" name="ingredient_unit" placeholder="Unit">
+			</div>
+			<div class="col-sm-3 my-1">
+				<button type="submit" class="btn btn-primary btn-block">Add ingredient</button>
+			</div>
+		</div>
+	</form>
+</divf>

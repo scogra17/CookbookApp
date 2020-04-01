@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+	{% if recipeIngredients|length < 1 %}
+	<p>No recipe ingredients have been added :(</p>
+	{% else %}
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Recipe id</th>
+				<th>Ingredient id</th>
+				<th>Unit amount</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for recipeIngredient in recipeIngredients %}
+			<tr>
+				<td>{{ recipeIngredient.recipe_id }}</td>
+				<td>{{ recipeIngredient.ingredient_id }}</td>
+				<td>{{ recipeIngredient.unit_amount }} </td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	{% endif %}
+</div>
+{% endblock content %}

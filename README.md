@@ -39,6 +39,9 @@ The browser is likely caching the old main.css. Click 'reload' while holding dow
 git remote set-url origin https://github.com/scogra17/CookbookApp
 git push -u origin master
 
+## Heroku deployment
+https://reverse-cook-app.herokuapp.com/
+
 ## DB changes
 From pipenv:
 $ python

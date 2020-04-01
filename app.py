@@ -41,9 +41,8 @@ class RecipeIngredient(db.Model):
 	unit_amount = db.Column(db.Float(), nullable=False)
 
 	def __repr__(self):
-		return "<id: %d, recipe_id: %d , ingredient_id: %d>"\
+		return "<id: %r, recipe_id: %r , ingredient_id: %r>"\
 		% (self.id, self.recipe_id, self.ingredient_id)
-
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -63,21 +62,23 @@ def index():
 		recipes = Recipe.query.order_by(Recipe.created_at).all()
 		return render_template('index.html', recipes=recipes)
 
+
 @app.route('/explore_ingredients', methods=['GET'])
 def explore_ingredients():
 	ingredients = Ingredient.query.all()
-	print(ingredients)
-	#create list from object
-	# ingredientMap = {} 
-	# for ingredient in ingredients:
-	# 	ingredientMap[ingredient.name] = \
-	# 		[{'measurement_unit': ingredient.measurement_unit},{'unit_cost': ingredient.unit_cost}]
-
 	if len(ingredients) == 0:
 		return "There are no ingredients in the database!"
 
 	return render_template('ingredients.html', ingredients=ingredients)
 
+
+@app.route('/explore_recipe_ingredients', methods=['GET'])
+def explore_recipe_ingredients():
+	recipeIngredients = RecipeIngredient.query.all()
+	if len(recipeIngredients) == 0:
+		return "There are no recipe ingredients in the database!"
+
+	return render_template('recipe_ingredients.html', recipeIngredients=recipeIngredients)
 
 
 
@@ -98,24 +99,62 @@ def update(id):
 	recipe = Recipe.query.get_or_404(id)
 
 	if request.method == 'POST':
-		print('app.route: /update/' + str(recipe.id), file=sys.stdout)
-		print('control flow: POST')
-		print('data pre-submit: recipe.name: ' + recipe.name, file=sys.stdout)
+		# print('app.route: /update/' + str(recipe.id), file=sys.stdout)
+		# print('control flow: POST')
+		# print('data pre-submit: recipe.name: ' + recipe.name, file=sys.stdout)
 		recipe.name = request.form['name']
-		print('data post-submit: recipe.name: ' + recipe.name, file=sys.stdout)
+		# print('data post-submit: recipe.name: ' + recipe.name, file=sys.stdout)
 
 		try:
 			db.session.commit()
-			return redirect('/')
+			return redirect('/update/' + str(id))
 		except: 
 			return "There was a problem updating data."
 
 	else:
 		title = "Update Data"
-		print('app.route: /update/' + str(recipe.id), file=sys.stdout)
-		print('control flow: !POST')
-		print('data: recipe.name: ' + recipe.name, file=sys.stdout)
+		# print('app.route: /update/' + str(recipe.id), file=sys.stdout)
+		# print('control flow: !POST')
+		# print('data: recipe.name: ' + recipe.name, file=sys.stdout)
 		return render_template('update.html', title=title, recipe=recipe)
+
+
+@app.route('/update/<int:id>/add_ingredient', methods=['POST'])
+def add_ingredient(id):
+	recipe = Recipe.query.get_or_404(id)
+	recipeName = recipe.name
+	# ingredient must already be in ingredient list. we only choose ingredient name 
+	# and amount here  
+
+	if request.method == 'POST':
+		ingredient_name = request.form['ingredient_name']
+		ingredient_unit = request.form['ingredient_unit']
+		unit_amount = request.form['unit_amount']
+
+		print('ingredient.name: ' + ingredient_name, file=sys.stdout)
+		# check ingredient table for ingredient_name
+		ingredient = Ingredient.query.filter(Ingredient.name == ingredient_name).filter(Ingredient.measurement_unit == ingredient_unit).all()
+		if len(ingredient) != 1:
+			return "This ingredient is not in the database. Add separately."
+		else:
+			print('id: ' + str(id), file=sys.stdout)
+			print('ingredient[0].id: ' + str(ingredient[0].id), file=sys.stdout)
+			print('unit_amount: ' + str(unit_amount), file=sys.stdout)
+
+			new_stuff2 = RecipeIngredient(recipe_id=id, ingredient_id=ingredient[0].id, unit_amount=unit_amount) 
+			print("new_stuff2")
+			print(new_stuff2)
+
+		try: 
+			db.session.add(new_stuff2)
+			db.session.commit()
+			return redirect('/update/' + str(id))
+		except:
+			return "There was a problem adding the ingredient."
+
+
+		
+
 
 
 
