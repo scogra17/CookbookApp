@@ -2,7 +2,6 @@
 
 {% block content %}
 <div class="container">
-	<h1 class="my-4">Reverse cook</h1>
 	{% if recipes|length < 1 %}
 	<p>There is nothing to cook for now :(</p>
 	{% else %}
@@ -26,5 +25,6 @@
 	{% endif %}
 
 	{% include 'snippets/form.html' %}
+	{% include 'snippets/ingredients_button.html' %}
 </div>
 {% endblock content %}

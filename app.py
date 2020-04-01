@@ -62,7 +62,24 @@ def index():
 	else: 
 		recipes = Recipe.query.order_by(Recipe.created_at).all()
 		return render_template('index.html', recipes=recipes)
-		
+
+@app.route('/explore_ingredients', methods=['GET'])
+def explore_ingredients():
+	ingredients = Ingredient.query.all()
+	print(ingredients)
+	#create list from object
+	# ingredientMap = {} 
+	# for ingredient in ingredients:
+	# 	ingredientMap[ingredient.name] = \
+	# 		[{'measurement_unit': ingredient.measurement_unit},{'unit_cost': ingredient.unit_cost}]
+
+	if len(ingredients) == 0:
+		return "There are no ingredients in the database!"
+
+	return render_template('ingredients.html', ingredients=ingredients)
+
+
+
 
 @app.route('/delete/<int:id>')
 def delete(id):

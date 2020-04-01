@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+	{% if ingredients|length < 1 %}
+	<p>No ingredients have been added.(</p>
+	{% else %}
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Ingredient</th>
+				<th>Measurement unit</th>
+				<th>Measurement cost</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for ingredient in ingredients %}
+			<tr>
+				<td>{{ ingredient.name }}</td>
+				<td>{{ ingredient.measurement_unit }}</td>
+				<td>{{ ingredient.unit_cost }} </td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	{% endif %}
+</div>
+{% endblock content %}

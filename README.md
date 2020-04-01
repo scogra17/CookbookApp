@@ -52,10 +52,15 @@ Add to table represented by model [ClassName]:
 >>> db.session.commit()
 
 Retrieving data:
+https://docs.sqlalchemy.org/en/13/orm/query.html
 >>> [ClassName].query.all()
 
 
 See tables:
 $ db.metadata.tables
+
+## DB browsing
+SQLite: https://docs.sqlalchemy.org/en/13/orm/tutorial.html
+Use DB broswer for SQLite: https://sqlitebrowser.org/dl/
 
 
