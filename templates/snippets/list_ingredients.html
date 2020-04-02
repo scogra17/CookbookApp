@@ -1,3 +1,24 @@
 <div class="container">
-
-</divf>
+	{% if recipe_ingredients|length < 1 %}
+	<p>There are no ingredients added for this recipe!</p>
+	{% else %}
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Ingredient name</th>
+				<th>Measurement unit</th>
+				<th>Unit amount</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for recipe_ingredient in recipe_ingredients %}
+			<tr>
+				<td>{{ recipe_ingredient.ingredient_name }}</td>
+				<td>{{ recipe_ingredient.measurement_unit }}</td>
+				<td>{{ recipe_ingredient.unit_amount }}</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	{% endif %}
+</div>

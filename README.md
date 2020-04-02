@@ -66,4 +66,6 @@ $ db.metadata.tables
 SQLite: https://docs.sqlalchemy.org/en/13/orm/tutorial.html
 Use DB broswer for SQLite: https://sqlitebrowser.org/dl/
 
+## Logging to console
+print(<message>, file=sys.stdout)
 

@@ -98,12 +98,18 @@ def delete(id):
 def update(id):
 	recipe = Recipe.query.get_or_404(id)
 
+	recipe_ingredients = db.session.query((Recipe.name).label('recipe_name'),\
+		(Ingredient.name).label('ingredient_name'),\
+		(Ingredient.measurement_unit).label('measurement_unit'),\
+		(RecipeIngredient.unit_amount).label('unit_amount'))\
+		.filter(Recipe.id == RecipeIngredient.recipe_id)\
+		.filter(Ingredient.id == RecipeIngredient.ingredient_id)\
+		.filter(Recipe.id == id).all()
+
+	print(recipe_ingredients, file=sys.stdout)
+
 	if request.method == 'POST':
-		# print('app.route: /update/' + str(recipe.id), file=sys.stdout)
-		# print('control flow: POST')
-		# print('data pre-submit: recipe.name: ' + recipe.name, file=sys.stdout)
 		recipe.name = request.form['name']
-		# print('data post-submit: recipe.name: ' + recipe.name, file=sys.stdout)
 
 		try:
 			db.session.commit()
@@ -113,10 +119,9 @@ def update(id):
 
 	else:
 		title = "Update Data"
-		# print('app.route: /update/' + str(recipe.id), file=sys.stdout)
-		# print('control flow: !POST')
-		# print('data: recipe.name: ' + recipe.name, file=sys.stdout)
-		return render_template('update.html', title=title, recipe=recipe)
+		#TODO: and ingredients as parameter and update update.html
+		return render_template('update.html', title=title, recipe=recipe,\
+			recipe_ingredients=recipe_ingredients)
 
 
 @app.route('/update/<int:id>/add_ingredient', methods=['POST'])
@@ -125,37 +130,26 @@ def add_ingredient(id):
 	recipeName = recipe.name
 	# ingredient must already be in ingredient list. we only choose ingredient name 
 	# and amount here  
-
 	if request.method == 'POST':
 		ingredient_name = request.form['ingredient_name']
 		ingredient_unit = request.form['ingredient_unit']
 		unit_amount = request.form['unit_amount']
 
 		print('ingredient.name: ' + ingredient_name, file=sys.stdout)
+		
 		# check ingredient table for ingredient_name
 		ingredient = Ingredient.query.filter(Ingredient.name == ingredient_name).filter(Ingredient.measurement_unit == ingredient_unit).all()
 		if len(ingredient) != 1:
 			return "This ingredient is not in the database. Add separately."
 		else:
-			print('id: ' + str(id), file=sys.stdout)
-			print('ingredient[0].id: ' + str(ingredient[0].id), file=sys.stdout)
-			print('unit_amount: ' + str(unit_amount), file=sys.stdout)
-
-			new_stuff2 = RecipeIngredient(recipe_id=id, ingredient_id=ingredient[0].id, unit_amount=unit_amount) 
-			print("new_stuff2")
-			print(new_stuff2)
+			new_stuff = RecipeIngredient(recipe_id=id, ingredient_id=ingredient[0].id, unit_amount=unit_amount) 
 
 		try: 
-			db.session.add(new_stuff2)
+			db.session.add(new_stuff)
 			db.session.commit()
 			return redirect('/update/' + str(id))
 		except:
 			return "There was a problem adding the ingredient."
-
-
-		
-
-
 
 
 if __name__ == '__main__':
