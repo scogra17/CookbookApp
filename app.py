@@ -1,12 +1,16 @@
 import sys
 from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy  
-from datetime import datetime  
+from datetime import datetime
+
+from flask_migrate import Migrate
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)  
+db = SQLAlchemy(app) 
+
+migrate = Migrate(app, db)	
 
 class Recipe(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
@@ -39,6 +43,7 @@ class RecipeIngredient(db.Model):
 	recipe_id = db.Column(db.Integer, db.ForeignKey('recipe.id'), nullable=False)
 	ingredient_id = db.Column(db.Integer, db.ForeignKey('ingredient.id'), nullable=False)
 	unit_amount = db.Column(db.Float(), nullable=False)
+	created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 	def __repr__(self):
 		return "<id: %r, recipe_id: %r , ingredient_id: %r>"\
@@ -104,7 +109,7 @@ def update(id):
 		(RecipeIngredient.unit_amount).label('unit_amount'))\
 		.filter(Recipe.id == RecipeIngredient.recipe_id)\
 		.filter(Ingredient.id == RecipeIngredient.ingredient_id)\
-		.filter(Recipe.id == id).all()
+		.filter(Recipe.id == id).order_by(Recipe.created_at).all()
 
 	print(recipe_ingredients, file=sys.stdout)
 

@@ -58,6 +58,8 @@ Retrieving data:
 https://docs.sqlalchemy.org/en/13/orm/query.html
 >>> [ClassName].query.all()
 
+## DB migrations 
+https://flask-migrate.readthedocs.io/en/latest/
 
 See tables:
 $ db.metadata.tables

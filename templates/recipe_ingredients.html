@@ -11,6 +11,7 @@
 				<th>Recipe id</th>
 				<th>Ingredient id</th>
 				<th>Unit amount</th>
+				<th>Created at</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -19,6 +20,7 @@
 				<td>{{ recipeIngredient.recipe_id }}</td>
 				<td>{{ recipeIngredient.ingredient_id }}</td>
 				<td>{{ recipeIngredient.unit_amount }} </td>
+				<td>{{ recipeIngredient.created_at }} </td>
 			</tr>
 			{% endfor %}
 		</tbody>
