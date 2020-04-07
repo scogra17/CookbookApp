@@ -68,13 +68,25 @@ def index():
 		return render_template('index.html', recipes=recipes)
 
 
-@app.route('/explore_ingredients', methods=['GET'])
+@app.route('/explore_ingredients', methods=['GET', 'POST'])
 def explore_ingredients():
-	ingredients = Ingredient.query.all()
-	if len(ingredients) == 0:
-		return "There are no ingredients in the database!"
+	if request.method == 'POST':
+		name = request.form['name']
+		measurement_unit = request.form['measurement_unit']
+		unit_cost = request.form['unit_cost']
+		new_ingredient = Ingredient(name=name, measurement_unit=measurement_unit,
+			unit_cost=unit_cost)
 
-	return render_template('ingredients.html', ingredients=ingredients)
+		try: 
+			db.session.add(new_ingredient)
+			db.session.commit()
+			return redirect('/explore_ingredients')
+		except:
+			return "There was a problem adding a new ingredient." 
+	
+	else: 
+		ingredients = Ingredient.query.order_by(Ingredient.created_at).all()
+		return render_template('ingredients.html', ingredients=ingredients)
 
 
 @app.route('/explore_recipe_ingredients', methods=['GET'])
