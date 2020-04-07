@@ -106,7 +106,8 @@ def update(id):
 	recipe_ingredients = db.session.query((Recipe.name).label('recipe_name'),\
 		(Ingredient.name).label('ingredient_name'),\
 		(Ingredient.measurement_unit).label('measurement_unit'),\
-		(RecipeIngredient.unit_amount).label('unit_amount'))\
+		(RecipeIngredient.unit_amount).label('unit_amount'),\
+		(RecipeIngredient.id).label('recipe_ingredient_id'))\
 		.filter(Recipe.id == RecipeIngredient.recipe_id)\
 		.filter(Ingredient.id == RecipeIngredient.ingredient_id)\
 		.filter(Recipe.id == id).order_by(Recipe.created_at).all()
@@ -139,8 +140,6 @@ def add_ingredient(id):
 		ingredient_name = request.form['ingredient_name']
 		ingredient_unit = request.form['ingredient_unit']
 		unit_amount = request.form['unit_amount']
-
-		print('ingredient.name: ' + ingredient_name, file=sys.stdout)
 		
 		# check ingredient table for ingredient_name
 		ingredient = Ingredient.query.filter(Ingredient.name == ingredient_name).filter(Ingredient.measurement_unit == ingredient_unit).all()
@@ -155,6 +154,17 @@ def add_ingredient(id):
 			return redirect('/update/' + str(id))
 		except:
 			return "There was a problem adding the ingredient."
+
+@app.route('/update/<int:id>/delete/<int:recipe_ingredient_id>')
+def delete_recipe_ingredient(id, recipe_ingredient_id):
+	recipe_ingredient = RecipeIngredient.query.get_or_404(recipe_ingredient_id)
+
+	try: 
+		db.session.delete(recipe_ingredient)
+		db.session.commit()
+		return redirect('/update/' + str(id))
+	except: 
+		return "There was a problem deleting data."
 
 
 if __name__ == '__main__':
