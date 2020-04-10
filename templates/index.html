@@ -2,6 +2,7 @@
 
 {% block content %}
 <div class="container">
+	{% include 'snippets/form.html' %}
 	{% if recipes|length < 1 %}
 	<p>There is nothing to cook for now :(</p>
 	{% else %}
@@ -23,9 +24,6 @@
 		</tbody>
 	</table>
 	{% endif %}
-
-	{% include 'snippets/form.html' %}
 	{% include 'snippets/ingredients_button.html' %}
-	{% include 'snippets/recipe_ingredients_button.html' %}
 </div>
 {% endblock content %}

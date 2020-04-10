@@ -64,7 +64,7 @@ def index():
 			return "There was a problem adding a new recipe."
 
 	else: 
-		recipes = Recipe.query.order_by(Recipe.created_at).all()
+		recipes = Recipe.query.order_by(Recipe.created_at.desc()).all()
 		return render_template('index.html', recipes=recipes)
 
 
@@ -85,7 +85,7 @@ def explore_ingredients():
 			return "There was a problem adding a new ingredient." 
 	
 	else: 
-		ingredients = Ingredient.query.order_by(Ingredient.created_at).all()
+		ingredients = Ingredient.query.order_by(Ingredient.created_at.desc()).all()
 		return render_template('ingredients.html', ingredients=ingredients)
 
 
