@@ -18,7 +18,7 @@
 			<tr>
 				<td><a href="/update/{{ recipe.id }}">{{ recipe.name }}</a></td>
 				<td>{{ recipe.created_at.date() }}</td>
-				<td class="text-right"><a class="btn btn-danger btn-sm" href="/update/delete/{{ recipe.id }}" role="button">Delete</a></td>
+				<td class="text-right"><a class="btn btn-danger btn-sm" href="/delete/{{ recipe.id }}" role="button">Delete</a></td>
 			</tr>
 			{% endfor %}
 		</tbody>

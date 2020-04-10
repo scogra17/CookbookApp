@@ -107,13 +107,7 @@ def find_recipes():
 			.having(text("count(ingredient.id)<=:form_recipe_ingredient_count"))\
 			.having(text("sum(ingredient.unit_cost * recipe_ingredient.unit_amount)<=:form_recipe_total_cost"))\
 			.params(form_recipe_ingredient_count=form_recipe_ingredient_count, form_recipe_total_cost=form_recipe_total_cost)\
-		
-		print(recipes, file=sys.stdout)
-
-		recipes = recipes.all()
-
-# 			.having(func.count(Ingredient.id)<=":recipe_ingredient_count")\
-# 			.having(func.sum(Ingredient.unit_cost * RecipeIngredient.unit_amount)<=":recipe_total_cost")\
+			.all()
 	
 		return render_template('find_recipes.html', recipes=recipes)
 
