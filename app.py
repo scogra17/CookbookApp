@@ -1,7 +1,9 @@
 import sys
 from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy  
+from sqlalchemy import func, text
 from datetime import datetime
+from math import inf 
 
 from flask_migrate import Migrate
 
@@ -88,6 +90,35 @@ def explore_ingredients():
 		ingredients = Ingredient.query.order_by(Ingredient.created_at.desc()).all()
 		return render_template('ingredients.html', ingredients=ingredients)
 
+@app.route('/find_recipes', methods=['GET', 'POST'])
+def find_recipes():
+	if request.method == 'POST':
+		form_recipe_ingredient_count = int(request.form['form_recipe_ingredient_count'] or 1000)
+		form_recipe_total_cost = float(request.form['form_recipe_total_cost'] or 1000)
+	
+		recipes = db.session.query(\
+			(Recipe.id).label('recipe_id'),\
+			(Recipe.name).label('recipe_name'),
+			(func.count(Ingredient.id).label('recipe_ingredient_count')),\
+			(func.sum(Ingredient.unit_cost * RecipeIngredient.unit_amount).label('recipe_total_cost')))\
+			.filter(Recipe.id == RecipeIngredient.recipe_id)\
+			.filter(Ingredient.id == RecipeIngredient.ingredient_id)\
+			.group_by(Recipe.id, Recipe.name)\
+			.having(text("count(ingredient.id)<=:form_recipe_ingredient_count"))\
+			.having(text("sum(ingredient.unit_cost * recipe_ingredient.unit_amount)<=:form_recipe_total_cost"))\
+			.params(form_recipe_ingredient_count=form_recipe_ingredient_count, form_recipe_total_cost=form_recipe_total_cost)\
+		
+		print(recipes, file=sys.stdout)
+
+		recipes = recipes.all()
+
+# 			.having(func.count(Ingredient.id)<=":recipe_ingredient_count")\
+# 			.having(func.sum(Ingredient.unit_cost * RecipeIngredient.unit_amount)<=":recipe_total_cost")\
+	
+		return render_template('find_recipes.html', recipes=recipes)
+
+	else:
+		return render_template('find_recipes.html')
 
 @app.route('/explore_recipe_ingredients', methods=['GET'])
 def explore_recipe_ingredients():

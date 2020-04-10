@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container">
+	<form action="/find_recipes" method="POST">
+		<divf class="form-row">
+			<div class="col-sm-4 my-1">
+				<input type="text" class="form-control" name="form_recipe_ingredient_count" placeholder="Count of ingredients (max.)">
+			</div>
+			<div class="col-sm-4 my-1">
+				<input type="text" class="form-control" name="form_recipe_total_cost" placeholder="Cost of ingredients (max.)">
+			</div>
+			<div class="col-sm-4 my-1">
+				<button type="submit" class="btn btn-primary btn-block">Find recipes!</button>
+			</div>
+		</div>
+	</form>
+</divf>
+<div class="container">
+
+	{% if recipes|length < 1 %}
+	<p>No recipes found :( Loosen the constraints -- you're either lazy or cheap.</p>
+	{% else %}
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Recipe</th>
+				<th>Count of ingredients</th>
+				<th>Cost of ingredients</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for recipe in recipes %}
+			<tr>
+				<td><a href="/update/{{ recipe.recipe_id }}">{{ recipe.recipe_name }}</a></td>
+				<td>{{ recipe.recipe_ingredient_count }}</td>
+				<td>{{ recipe.recipe_total_cost }} </td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	{% endif %}
+</div>
+
+{% endblock content %}
