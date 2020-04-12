@@ -1,3 +1,22 @@
 body {
   background: #FFFFFF;
 }
+
+#site-header {
+	display: inline-block;
+	font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+	font-size: 2.5rem;
+	vertical-align: middle;
+}
+
+#kitchen-logo {
+	width: 40px;
+}
+
+#nav-bar {
+	margin-bottom: 1em;
+}
+
+#expanded-options {
+	margin-left: 4em;
+}
