@@ -1,5 +1,3 @@
-
-
 <nav id="nav-bar" class="navbar navbar-expand-lg navbar-light bg-light container">
 	<div onclick="location.href='/';" style="cursor: pointer;" class="site-header">
 		<img id="kitchen-logo" src="../../static/img/kitchen.png" alt="kitchen.png">
@@ -11,15 +9,25 @@
 
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul id="expanded-options" class="navbar-nav mr-auto">
-      <li class="nav-item active">
-        <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
-      </li>
       <li class="nav-item">
-        <a class="nav-link" href="/explore_ingredients">Explore ingredients</a>
+        <a class="nav-link" href="/">Add recipes</a>
       </li>
        <li class="nav-item">
         <a class="nav-link" href="/find_recipes">Find recipes</a>
       </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/explore_ingredients">Explore ingredients</a>
+      </li>
+      
+      {% if current_user.is_authenticated %}
+      <li class="nav-item">
+        <a class="nav-link" href="/profile">Profile</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/logout">Logout</a>
+      </li>
+      {% endif %}
+
     </ul>
   </div>
 </nav>

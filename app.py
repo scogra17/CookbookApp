@@ -1,18 +1,31 @@
 import sys
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy  
 from sqlalchemy import func, text
 from datetime import datetime
-from math import inf 
+from math import inf
+from werkzeug.security import generate_password_hash, check_password_hash 
 
 from flask_migrate import Migrate
+from flask_login import UserMixin, LoginManager, login_user, logout_user, login_required, current_user
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SECRET_KEY'] = '9OLWxND4o83j4K4iuopO'
+
 db = SQLAlchemy(app) 
 
 migrate = Migrate(app, db)	
+
+login_manager = LoginManager()
+login_manager.login_view = 'login'
+login_manager.init_app(app)
+
+@login_manager.user_loader
+def load_user(user_id):
+    # since the user_id is just the primary key of our user table, use it in the query for the user
+    return User.query.get(int(user_id))
 
 class Recipe(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
@@ -51,8 +64,19 @@ class RecipeIngredient(db.Model):
 		return "<id: %r, recipe_id: %r , ingredient_id: %r>"\
 		% (self.id, self.recipe_id, self.ingredient_id)
 
+class User(UserMixin, db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(100), unique=True)
+    password = db.Column(db.String(100))
+    first_name = db.Column(db.String(1000))
+    last_name = db.Column(db.String(1000))
+
+    def __repr__(self):
+    	return '<User %r>' % self.email
+
 
 @app.route('/', methods=['GET', 'POST'])
+@login_required
 def index():
 	if request.method == 'POST':
 		name = request.form['name']
@@ -70,7 +94,67 @@ def index():
 		return render_template('index.html', recipes=recipes)
 
 
+@app.route('/login', methods=['POST', 'GET'])
+def login():
+	if request.method == 'POST':
+	    email = request.form.get('email')
+	    password = request.form.get('password')
+	    remember = True if request.form.get('remember') else False
+
+	    user = User.query.filter_by(email=email).first()
+
+	    # check if user actually exists
+	    # take the user supplied password, hash it, and compare it to the hashed password in database
+	    if not user or not check_password_hash(user.password, password):
+	        flash('Please check your login details and try again.')
+	        return redirect(url_for('login')) # if user doesn't exist or password is wrong, reload the page
+
+	    # if the above check passes, then we know the user has the right credentials
+	    login_user(user, remember=remember)
+	    return redirect(url_for('profile'))
+	else: 
+	    return render_template('login.html')
+
+
+@app.route('/signup', methods=['POST', 'GET'])
+def signup():
+	if request.method == 'POST':
+	    # validate and add user to database 
+	    email = request.form.get('email')
+	    first_name = request.form.get('name')
+	    password = request.form.get('password')
+
+	    user = User.query.filter_by(email=email).first() # if this returns a user, then the email already exists in database
+
+	    if user: # if a user is found, we want to redirect back to signup page so user can try again
+	        flash('Email address already exists')
+	        return redirect(url_for('signup'))
+
+	     # create new user with the form data. Hash the password so plaintext version isn't saved.
+	    new_user = User(email=email, first_name=first_name, password=generate_password_hash(password, method='sha256'))
+
+	    # add the new user to the database
+	    db.session.add(new_user)
+	    db.session.commit()
+
+	    return redirect(url_for('login'))
+	else:
+		return render_template('signup.html')
+    
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
+
+@app.route('/profile')
+@login_required
+def profile():
+    return render_template('profile.html', name=current_user.first_name)
+
 @app.route('/explore_ingredients', methods=['GET', 'POST'])
+@login_required
 def explore_ingredients():
 	if request.method == 'POST':
 		name = request.form['name']
@@ -91,6 +175,7 @@ def explore_ingredients():
 		return render_template('ingredients.html', ingredients=ingredients)
 
 @app.route('/find_recipes', methods=['GET', 'POST'])
+@login_required
 def find_recipes():
 	if request.method == 'POST':
 		form_recipe_ingredient_count = int(request.form['form_recipe_ingredient_count'] or 1000)
@@ -115,6 +200,7 @@ def find_recipes():
 		return render_template('find_recipes.html')
 
 @app.route('/explore_recipe_ingredients', methods=['GET'])
+@login_required
 def explore_recipe_ingredients():
 	recipeIngredients = RecipeIngredient.query.all()
 	if len(recipeIngredients) == 0:
@@ -125,6 +211,7 @@ def explore_recipe_ingredients():
 
 
 @app.route('/delete/<int:id>')
+@login_required
 def delete(id):
 	recipe = Recipe.query.get_or_404(id)
 
@@ -137,6 +224,7 @@ def delete(id):
 
 
 @app.route('/update/<int:id>', methods=['GET', 'POST'])
+@login_required
 def update(id):
 	recipe = Recipe.query.get_or_404(id)
 
@@ -148,8 +236,6 @@ def update(id):
 		.filter(Recipe.id == RecipeIngredient.recipe_id)\
 		.filter(Ingredient.id == RecipeIngredient.ingredient_id)\
 		.filter(Recipe.id == id).order_by(Recipe.created_at).all()
-
-	print(recipe_ingredients, file=sys.stdout)
 
 	if request.method == 'POST':
 		recipe.name = request.form['name']
@@ -168,6 +254,7 @@ def update(id):
 
 
 @app.route('/update/<int:id>/add_ingredient', methods=['POST'])
+@login_required
 def add_ingredient(id):
 	recipe = Recipe.query.get_or_404(id)
 	recipeName = recipe.name
@@ -193,6 +280,7 @@ def add_ingredient(id):
 			return "There was a problem adding the ingredient."
 
 @app.route('/update/<int:id>/delete/<int:recipe_ingredient_id>')
+@login_required
 def delete_recipe_ingredient(id, recipe_ingredient_id):
 	recipe_ingredient = RecipeIngredient.query.get_or_404(recipe_ingredient_id)
 

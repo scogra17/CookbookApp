@@ -20,6 +20,9 @@ $ python app.py
 ## Project journal 
 https://docs.google.com/document/d/1fzTE_AFB1A7JmUz-4jXnifOgEtxpAvjl_dLOgh2XTK8/edit?usp=sharing
 
+## Reviewing authentication
+https://www.digitalocean.com/community/tutorials/how-to-add-authentication-to-your-app-with-flask-login
+
 ## Reviewing Flask 
 https://medium.com/technest/build-a-crud-app-with-flask-bootstrap-heroku-60dfa3a788e8
 
@@ -60,6 +63,12 @@ https://docs.sqlalchemy.org/en/13/orm/query.html
 
 ## DB migrations 
 https://flask-migrate.readthedocs.io/en/latest/
+
+HOWTO: 
+make change to db in app.py then: 
+	$ pipenv shell 
+	$ flask db migrate -m "<message>"
+	$ flask db upgrade 
 
 See tables:
 $ db.metadata.tables
