@@ -76,8 +76,13 @@ class User(UserMixin, db.Model):
 
 
 @app.route('/', methods=['GET', 'POST'])
-@login_required
 def index():
+	return render_template('index.html')
+
+
+@app.route('/add_recipe', methods=['GET', 'POST'])
+@login_required
+def add_recipe():
 	if request.method == 'POST':
 		name = request.form['name']
 		new_stuff = Recipe(name=name)
@@ -85,13 +90,13 @@ def index():
 		try: 
 			db.session.add(new_stuff)
 			db.session.commit()
-			return redirect('/')
+			return redirect('/add_recipe')
 		except:
 			return "There was a problem adding a new recipe."
 
 	else: 
 		recipes = Recipe.query.order_by(Recipe.created_at.desc()).all()
-		return render_template('index.html', recipes=recipes)
+		return render_template('add_recipe.html', recipes=recipes)
 
 
 @app.route('/login', methods=['POST', 'GET'])
@@ -218,7 +223,7 @@ def delete(id):
 	try: 
 		db.session.delete(recipe)
 		db.session.commit()
-		return redirect('/')
+		return redirect('/add_recipe')
 	except: 
 		return "There was a problem deleting data."
 

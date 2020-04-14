@@ -1,5 +1,7 @@
-body {
+body, html {
   background: #FFFFFF;
+  height: 100%;
+  margin: 0;
 }
 
 #site-header {
@@ -13,10 +15,25 @@ body {
 	width: 40px;
 }
 
-#nav-bar {
-	margin-bottom: 1em;
-}
-
 #expanded-options {
 	margin-left: 4em;
+}
+
+.background-picture {
+	background-image: url("../img/fork.jpg");
+	height: 100%;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+
+.index-header {
+	color: #FFFFFF;
+}
+
+.profile-greeting {
+	font-size: 5em;
+	text-align: center;
+	padding-top: 7%;
+	color: #FFFFFF;
 }

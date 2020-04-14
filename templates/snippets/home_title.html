@@ -1,4 +1,4 @@
-<nav id="nav-bar" class="navbar navbar-expand-lg navbar-light bg-light container">
+<nav id="nav-bar" class="navbar navbar-expand-lg navbar-light bg-light">
 	<div onclick="location.href='/';" style="cursor: pointer;" class="site-header">
 		<img id="kitchen-logo" src="../../static/img/kitchen.png" alt="kitchen.png">
 		<div id="site-header">Reverse cook</div>
@@ -8,9 +8,14 @@
   </button>
 
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul id="expanded-options" class="navbar-nav mr-auto">
+    <ul id="expanded-options" class="nav navbar-nav">
+
+      {% if current_user.is_authenticated %}
       <li class="nav-item">
-        <a class="nav-link" href="/">Add recipes</a>
+        <a class="nav-link" href="/profile">Home</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/add_recipe">Add recipes</a>
       </li>
        <li class="nav-item">
         <a class="nav-link" href="/find_recipes">Find recipes</a>
@@ -18,14 +23,18 @@
       <li class="nav-item">
         <a class="nav-link" href="/explore_ingredients">Explore ingredients</a>
       </li>
-      
-      {% if current_user.is_authenticated %}
-      <li class="nav-item">
-        <a class="nav-link" href="/profile">Profile</a>
-      </li>
       <li class="nav-item">
         <a class="nav-link" href="/logout">Logout</a>
       </li>
+      {% else %}
+
+     <li class="nav-item">
+        <a class="nav-link" href="/login">Login</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/signup">Sign up</a>
+      </li>
+
       {% endif %}
 
     </ul>
