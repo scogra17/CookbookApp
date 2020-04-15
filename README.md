@@ -80,3 +80,9 @@ Use DB broswer for SQLite: https://sqlitebrowser.org/dl/
 ## Logging to console
 print(<message>, file=sys.stdout)
 
+## CSS
+### Float flex box to the right
+https://stackoverflow.com/questions/36182635/making-a-flex-item-float-right/36182782
+
+
+

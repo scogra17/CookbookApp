@@ -37,3 +37,8 @@ body, html {
 	padding-top: 7%;
 	color: #FFFFFF;
 }
+
+
+.navbar-right {
+	margin-left:auto !important;
+}
