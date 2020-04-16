@@ -11,6 +11,7 @@
 			<tr>
 				<th>Recipes</th>
 				<th>Added</th>
+				<th>Created by</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -18,6 +19,7 @@
 			<tr>
 				<td><a href="/update/{{ recipe.id }}">{{ recipe.name }}</a></td>
 				<td>{{ recipe.created_at.date() }}</td>
+				<td>{{ recipe.created_by }}</td>
 				<td class="text-right"><a class="btn btn-danger btn-sm" href="/delete/{{ recipe.id }}" role="button">Delete</a></td>
 			</tr>
 			{% endfor %}

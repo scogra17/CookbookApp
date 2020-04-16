@@ -33,7 +33,9 @@ class Recipe(db.Model):
 	created_at = db.Column(db.DateTime, nullable=False, 
 		default=datetime.utcnow)
 	recipeingredient = db.relationship('RecipeIngredient', backref='recipe',\
-		lazy=True) 
+		lazy=True)
+	created_by = db.Column(db.String(100), default=None)
+	is_public = db.Column(db.Boolean, default=True)  
 
 	def __repr__(self):
 		return '<Recipe %r>' % self.name 
@@ -85,7 +87,8 @@ def index():
 def add_recipe():
 	if request.method == 'POST':
 		name = request.form['name']
-		new_stuff = Recipe(name=name)
+		created_by = current_user.email 
+		new_stuff = Recipe(name=name, created_by=created_by)
 
 		try: 
 			db.session.add(new_stuff)
