@@ -46,3 +46,16 @@ body, html {
 .top-table-header {
 	margin-top: 1em;
 }
+
+.recipe-update-header {
+	display: inline;
+}
+
+.update-container {
+	margin-top: 1em;
+	margin-bottom: 1em;
+}
+
+.form-update {
+	display: inline;
+}

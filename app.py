@@ -240,9 +240,28 @@ def delete(id):
 		return "There was a problem deleting data."
 
 
-@app.route('/update/<int:id>', methods=['GET', 'POST'])
+@app.route('/view_recipe/<int:id>', methods=['GET'])
 @login_required
-def update(id):
+def view_recipe(id):
+	recipe = Recipe.query.get_or_404(id)
+
+	recipe_ingredients = db.session.query((Recipe.name).label('recipe_name'),\
+		(Ingredient.name).label('ingredient_name'),\
+		(Ingredient.measurement_unit).label('measurement_unit'),\
+		(RecipeIngredient.unit_amount).label('unit_amount'),\
+		(RecipeIngredient.id).label('recipe_ingredient_id'))\
+		.filter(Recipe.id == RecipeIngredient.recipe_id)\
+		.filter(Ingredient.id == RecipeIngredient.ingredient_id)\
+		.filter(Recipe.id == id).order_by(Recipe.created_at).all()
+
+	title = "View Recipe"
+		#TODO: and ingredients as parameter and update update_recipe.html
+	return render_template('view_recipe.html', title=title, recipe=recipe,\
+		recipe_ingredients=recipe_ingredients)
+
+@app.route('/update_recipe/<int:id>', methods=['GET', 'POST'])
+@login_required
+def update_recipe(id):
 	recipe = Recipe.query.get_or_404(id)
 
 	recipe_ingredients = db.session.query((Recipe.name).label('recipe_name'),\
@@ -256,21 +275,24 @@ def update(id):
 
 	if request.method == 'POST':
 		recipe.name = request.form['name']
+		recipe.is_public = int(request.form.get('is_public_toggle') or 0) 
+
+		print(str(recipe.is_public), file=sys.stdout)
 
 		try:
 			db.session.commit()
-			return redirect('/update/' + str(id))
+			return redirect('/update_recipe/' + str(id))
 		except: 
 			return "There was a problem updating data."
 
 	else:
 		title = "Update Data"
-		#TODO: and ingredients as parameter and update update.html
-		return render_template('update.html', title=title, recipe=recipe,\
+		#TODO: and ingredients as parameter and update update_recipe.html
+		return render_template('update_recipe.html', title=title, recipe=recipe,\
 			recipe_ingredients=recipe_ingredients)
 
 
-@app.route('/update/<int:id>/add_ingredient', methods=['POST'])
+@app.route('/update_recipe/<int:id>/add_ingredient', methods=['POST'])
 @login_required
 def add_ingredient(id):
 	recipe = Recipe.query.get_or_404(id)
@@ -292,11 +314,11 @@ def add_ingredient(id):
 		try: 
 			db.session.add(new_stuff)
 			db.session.commit()
-			return redirect('/update/' + str(id))
+			return redirect('/update_recipe/' + str(id))
 		except:
 			return "There was a problem adding the ingredient."
 
-@app.route('/update/<int:id>/delete/<int:recipe_ingredient_id>')
+@app.route('/update_recipe/<int:id>/delete/<int:recipe_ingredient_id>')
 @login_required
 def delete_recipe_ingredient(id, recipe_ingredient_id):
 	recipe_ingredient = RecipeIngredient.query.get_or_404(recipe_ingredient_id)
@@ -304,7 +326,7 @@ def delete_recipe_ingredient(id, recipe_ingredient_id):
 	try: 
 		db.session.delete(recipe_ingredient)
 		db.session.commit()
-		return redirect('/update/' + str(id))
+		return redirect('/update_recipe/' + str(id))
 	except: 
 		return "There was a problem deleting data."
 

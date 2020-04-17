@@ -17,7 +17,7 @@
 		<tbody>
 			{% for my_recipe in my_recipes %}
 			<tr>
-				<td><a href="/update/{{ my_recipe.id }}">{{ my_recipe.name }}</a></td>
+				<td><a href="/update_recipe/{{ my_recipe.id }}">{{ my_recipe.name }}</a></td>
 				<td>{{ my_recipe.created_at.date() }}</td>
 				<td class="text-right"><a class="btn btn-danger btn-sm" href="/delete/{{ my_recipe.id }}" role="button">Delete</a></td>
 			</tr>
@@ -41,7 +41,7 @@
 		<tbody>
 			{% for community_recipe in community_recipes %}
 			<tr>
-				<td><a href="/update/{{ community_recipe.id }}">{{ community_recipe.name }}</a></td>
+				<td><a href="/view_recipe/{{ community_recipe.id }}">{{ community_recipe.name }}</a></td>
 				<td>{{ community_recipe.created_at.date() }}</td>
 				<td>{{ community_recipe.created_by }}</td>
 			</tr>

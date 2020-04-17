@@ -16,7 +16,9 @@
 				<td>{{ recipe_ingredient.ingredient_name }}</td>
 				<td>{{ recipe_ingredient.measurement_unit }}</td>
 				<td>{{ recipe_ingredient.unit_amount }}</td>
-				<td class="text-right"><a class="btn btn-danger btn-sm" href="/update/{{ recipe.id }}/delete/{{ recipe_ingredient.recipe_ingredient_id }}" role="button">Delete</a></td>
+				{% if recipe.created_by == current_user.email %}
+				<td class="text-right"><a class="btn btn-danger btn-sm" href="/update_recipe/{{ recipe.id }}/delete/{{ recipe_ingredient.recipe_ingredient_id }}" role="button">Delete</a></td>
+				{% endif %}
 			</tr>
 			{% endfor %}
 		</tbody>
