@@ -2,6 +2,7 @@ import sys
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy  
 from sqlalchemy import func, text
+from sqlalchemy import or_
 from datetime import datetime
 from math import inf
 from werkzeug.security import generate_password_hash, check_password_hash 
@@ -98,8 +99,16 @@ def add_recipe():
 			return "There was a problem adding a new recipe."
 
 	else: 
-		recipes = Recipe.query.order_by(Recipe.created_at.desc()).all()
-		return render_template('add_recipe.html', recipes=recipes)
+		my_recipes = Recipe.query\
+			.filter_by(created_by = current_user.email)\
+			.order_by(Recipe.created_at.desc()).all()
+		community_recipes = Recipe.query\
+			.filter(or_(Recipe.created_by != current_user.email, Recipe.created_by == None))\
+			.filter(or_(Recipe.is_public == 1, Recipe.is_public == None))\
+			.order_by(Recipe.created_at.desc()).all()
+
+		return render_template('add_recipe.html', 
+			my_recipes=my_recipes, community_recipes=community_recipes)
 
 
 @app.route('/login', methods=['POST', 'GET'])

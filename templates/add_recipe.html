@@ -2,8 +2,32 @@
 
 {% block content %}
 <div class="container">
+	<h3 class="top-table-header">My recipes</h3>
 	{% include 'snippets/form.html' %}
-	{% if recipes|length < 1 %}
+	{% if my_recipes|length < 1 %}
+	<p>There is nothing to cook for now :(</p>
+	{% else %}
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Recipes</th>
+				<th>Added</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for my_recipe in my_recipes %}
+			<tr>
+				<td><a href="/update/{{ my_recipe.id }}">{{ my_recipe.name }}</a></td>
+				<td>{{ my_recipe.created_at.date() }}</td>
+				<td class="text-right"><a class="btn btn-danger btn-sm" href="/delete/{{ my_recipe.id }}" role="button">Delete</a></td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	{% endif %}
+
+	<h3>Community recipes</h3>
+	{% if community_recipes|length < 1 %}
 	<p>There is nothing to cook for now :(</p>
 	{% else %}
 	<table class="table">
@@ -15,16 +39,16 @@
 			</tr>
 		</thead>
 		<tbody>
-			{% for recipe in recipes %}
+			{% for community_recipe in community_recipes %}
 			<tr>
-				<td><a href="/update/{{ recipe.id }}">{{ recipe.name }}</a></td>
-				<td>{{ recipe.created_at.date() }}</td>
-				<td>{{ recipe.created_by }}</td>
-				<td class="text-right"><a class="btn btn-danger btn-sm" href="/delete/{{ recipe.id }}" role="button">Delete</a></td>
+				<td><a href="/update/{{ community_recipe.id }}">{{ community_recipe.name }}</a></td>
+				<td>{{ community_recipe.created_at.date() }}</td>
+				<td>{{ community_recipe.created_by }}</td>
 			</tr>
 			{% endfor %}
 		</tbody>
 	</table>
+
 	{% endif %}
 </div>
 {% endblock content %}
