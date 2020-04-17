@@ -205,6 +205,7 @@ def find_recipes():
 			(func.sum(Ingredient.unit_cost * RecipeIngredient.unit_amount).label('recipe_total_cost')))\
 			.filter(Recipe.id == RecipeIngredient.recipe_id)\
 			.filter(Ingredient.id == RecipeIngredient.ingredient_id)\
+			.filter(or_(Recipe.created_by == current_user.email, Recipe.created_by == None, Recipe.is_public == 1))\
 			.group_by(Recipe.id, Recipe.name)\
 			.having(text("count(ingredient.id)<=:form_recipe_ingredient_count"))\
 			.having(text("sum(ingredient.unit_cost * recipe_ingredient.unit_amount)<=:form_recipe_total_cost"))\

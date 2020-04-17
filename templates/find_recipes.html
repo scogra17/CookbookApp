@@ -33,7 +33,7 @@
 		<tbody>
 			{% for recipe in recipes %}
 			<tr>
-				<td><a href="/update_recipe/{{ recipe.recipe_id }}">{{ recipe.recipe_name }}</a></td>
+				<td><a href="/view_recipe/{{ recipe.recipe_id }}">{{ recipe.recipe_name }}</a></td>
 				<td>{{ recipe.recipe_ingredient_count }}</td>
 				<td>{{ recipe.recipe_total_cost }} </td>
 			</tr>
