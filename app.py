@@ -194,28 +194,29 @@ def explore_ingredients():
 @app.route('/find_recipes', methods=['GET', 'POST'])
 @login_required
 def find_recipes():
+	form_recipe_ingredient_count = 1000
+	form_recipe_total_cost = 1000
+
 	if request.method == 'POST':
 		form_recipe_ingredient_count = int(request.form['form_recipe_ingredient_count'] or 1000)
 		form_recipe_total_cost = float(request.form['form_recipe_total_cost'] or 1000)
 	
-		recipes = db.session.query(\
-			(Recipe.id).label('recipe_id'),\
-			(Recipe.name).label('recipe_name'),
-			(func.count(Ingredient.id).label('recipe_ingredient_count')),\
-			(func.sum(Ingredient.unit_cost * RecipeIngredient.unit_amount).label('recipe_total_cost')))\
-			.filter(Recipe.id == RecipeIngredient.recipe_id)\
-			.filter(Ingredient.id == RecipeIngredient.ingredient_id)\
-			.filter(or_(Recipe.created_by == current_user.email, Recipe.created_by == None, Recipe.is_public == 1))\
-			.group_by(Recipe.id, Recipe.name)\
-			.having(text("count(ingredient.id)<=:form_recipe_ingredient_count"))\
-			.having(text("sum(ingredient.unit_cost * recipe_ingredient.unit_amount)<=:form_recipe_total_cost"))\
-			.params(form_recipe_ingredient_count=form_recipe_ingredient_count, form_recipe_total_cost=form_recipe_total_cost)\
-			.all()
+	recipes = db.session.query(\
+		(Recipe.id).label('recipe_id'),\
+		(Recipe.name).label('recipe_name'),
+		(func.count(Ingredient.id).label('recipe_ingredient_count')),\
+		(func.sum(Ingredient.unit_cost * RecipeIngredient.unit_amount).label('recipe_total_cost')))\
+		.filter(Recipe.id == RecipeIngredient.recipe_id)\
+		.filter(Ingredient.id == RecipeIngredient.ingredient_id)\
+		.filter(or_(Recipe.created_by == current_user.email, Recipe.created_by == None, Recipe.is_public == 1))\
+		.group_by(Recipe.id, Recipe.name)\
+		.having(text("count(ingredient.id)<=:form_recipe_ingredient_count"))\
+		.having(text("sum(ingredient.unit_cost * recipe_ingredient.unit_amount)<=:form_recipe_total_cost"))\
+		.params(form_recipe_ingredient_count=form_recipe_ingredient_count, form_recipe_total_cost=form_recipe_total_cost)\
+		.all()
 	
-		return render_template('find_recipes.html', recipes=recipes)
+	return render_template('find_recipes.html', recipes=recipes)
 
-	else:
-		return render_template('find_recipes.html')
 
 @app.route('/explore_recipe_ingredients', methods=['GET'])
 @login_required
@@ -257,7 +258,7 @@ def view_recipe(id):
 
 	title = "View Recipe"
 		#TODO: and ingredients as parameter and update update_recipe.html
-	return render_template('view_recipe.html', title=title, recipe=recipe,\
+	return render_template('update_recipe.html', title=title, recipe=recipe,\
 		recipe_ingredients=recipe_ingredients)
 
 @app.route('/update_recipe/<int:id>', methods=['GET', 'POST'])
